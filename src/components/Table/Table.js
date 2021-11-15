@@ -3,15 +3,25 @@ import {useTable} from 'react-table';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import {useMemo,useEffect} from 'react';
 import {useSelector,useDispatch} from 'react-redux'
-import {actionDashboard} from "../../store/action/actionDashboard";
+import {actionDashboard,deleteData} from "../../store/action/actionDashboard";
 
 
-function TableContent(){
+function TableContent({setOpen,setCurrent}){
     const dispatch = useDispatch();
     const data = useSelector(state=>state.data)
     useEffect(()=>{
-        dispatch(actionDashboard())
+        if(!data.length){
+            dispatch(actionDashboard())
+        }
     },[])
+
+    const onDeleteData=(data)=>{
+        dispatch(deleteData(data))
+    }
+    const showModal=(current)=>{
+        setCurrent(current)
+        setOpen(true)
+    }
     const columns = useMemo(()=>[
         {
             Header:'От кого',
@@ -32,12 +42,12 @@ function TableContent(){
         {
             Header:()=>null,
             accessor:'push',
-            Cell:()=>(
+            Cell:({row})=>(
                 <>
-                    <Button variant="primary">
+                    <Button variant="primary" onClick={()=>showModal(row.original.dashboard_id)}>
                         <i className="bi bi-pencil-fill"/>
                     </Button>
-                    <Button variant="primary">
+                    <Button variant="primary" onClick={()=>onDeleteData(row.original.dashboard_id)}>
                         <i className="bi bi-trash"/>
                     </Button>
                 </>
@@ -72,18 +82,24 @@ function TableContent(){
                 </thead>
                 <tbody {...getTableBodyProps()}>
                 {
-                    rows.map((row,i)=>{
-                        prepareRow(row)
-                        return (
-                            <tr {...row.getRowProps()}>
-                                {
-                                    row.cells.map(cell=>{
-                                        return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                                    })
-                                }
-                            </tr>
-                        )
-                    })
+                    rows.length ? (
+                        rows.map((row,i)=>{
+                            prepareRow(row)
+                            return (
+                                <tr {...row.getRowProps()}>
+                                    {
+                                        row.cells.map(cell=>{
+                                            return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                                        })
+                                    }
+                                </tr>
+                            )
+                        })
+                    ) : (
+                        <tr>
+                            <td>Нет данных</td>
+                        </tr>
+                    )
                 }
                 </tbody>
         </Table>

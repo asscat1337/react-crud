@@ -34,6 +34,29 @@ class dashboardController{
             console.log(e)
         }
     }
+    async deleteData(req,res,next){
+        try{
+            const {id} = req.body
+            await Dashboard.destroy({where:{
+                dashboard_id:id
+            }})
+            .then(()=>res.send().status(200))
+        }catch(e){
+            console.log(e)
+        }
+    }
+    async updateDashboard(req,res,next){
+        try{
+            const {dashboard_id} = req.body
+            await Dashboard.update(req.body,{
+                where:{
+                    dashboard_id
+                }
+            }).then(res.send().status(200))
+        }catch(e){
+            console.log(e)
+        }
+    }
 }
 
 
