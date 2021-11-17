@@ -5,7 +5,7 @@ const dashboardController = require('../ controller/dashboardController');
 const authJWT = require('../middleware/authJWT')
 
 
-router.get('/get-dashboard',dashboardController.getData);
+router.get('/get-dashboard',authJWT,dashboardController.getData);
 router.get('/get-state/:id',dashboardController.getState);
 router.get('/get-department',dashboardController.getDepartment);
 router.post('/add-dashboard',dashboardController.addDashboard);

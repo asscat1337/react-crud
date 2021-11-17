@@ -8,6 +8,7 @@ import actionDepartment from '../../store/action/actionDepartment'
 import {addActionDashboard,updateDashboard} from "../../store/action/actionDashboard";
 
 function FormData({editable,current}){
+
     const dispatch = useDispatch();
     const department = useSelector(state=>state.dashboard.department);
 
@@ -15,7 +16,7 @@ function FormData({editable,current}){
         from:yup.string().required(`'От кого' должно быть заполнено`),
         patient:yup.string().required(`'Пациент' должен быть заполнено`),
         department:yup.string().required(),
-        state:yup.string().required()
+         state:yup.string()
     })
 
     const {register,handleSubmit,formState:{errors},reset,setValue} = useForm({
@@ -30,12 +31,14 @@ function FormData({editable,current}){
             setValue("from",current.from)
             setValue("patient",current.patient)
         }
-    },[current])
-    const onSubmit =(data)=>{
+    },[current,editable])
+    const onSubmit=(data)=>{
+        console.log(data)
+        console.log(123)
         if(editable){
-            
             dispatch(updateDashboard({dashboard_id:current.dashboard_id,...data}))
-        }else{
+        }
+        else{
             dispatch(addActionDashboard(data))
         }
         reset({})

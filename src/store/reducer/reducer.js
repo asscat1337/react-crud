@@ -69,7 +69,6 @@ function reducer(state=initialState,action){
                             from:action.payload.from,
                             patient:action.payload.patient,
                             department:action.payload.department,
-                            state:action.payload.state
                         }
                     }
                         return item

@@ -1,5 +1,5 @@
-import {Table, Button} from "react-bootstrap";
-import {useTable,useGlobalFilter} from 'react-table';
+import {Table, Button,Pagination} from "react-bootstrap";
+import {useTable,useGlobalFilter,useSortBy} from 'react-table';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import {useMemo,useEffect} from 'react';
 import {useSelector,useDispatch} from 'react-redux'
@@ -7,7 +7,7 @@ import {actionDashboard,deleteData} from "../../store/action/actionDashboard";
 import Header from "../Header/Header";
 
 
-function TableContent({setOpen,setCurrent,setStateModal,setCurrentState}){
+function TableContent({setOpen,setCurrent,setStateModal,setCurrentState,setAddOpen}){
     const dispatch = useDispatch();
     const data = useSelector(state=>state.dashboard.data);
     useEffect(()=>{
@@ -70,11 +70,11 @@ function TableContent({setOpen,setCurrent,setStateModal,setCurrentState}){
         prepareRow,
         state,
         setGlobalFilter
-    } = useTable({columns,data},useGlobalFilter);
+    } = useTable({columns,data},useGlobalFilter,useSortBy);
     const {globalFilter} = state;
     return(
         <>
-        <Header filter={globalFilter} setFilter={setGlobalFilter}/>
+        <Header filter={globalFilter} setFilter={setGlobalFilter} setAddOpen={setAddOpen}/>
         <Table striped bordered hover {...getTableProps()}>
                 <thead>
                 {
@@ -82,10 +82,18 @@ function TableContent({setOpen,setCurrent,setStateModal,setCurrentState}){
                         <tr {...headerGroup.getHeaderGroupProps()}>
                             {
                                 headerGroup.headers.map(column=>(
-                                    <th {...column.getHeaderProps()}>
+                                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                                         {
                                             column.render('Header')
                                         }
+                                        <span>
+                                            {column.isSorted ?
+                                             column.isSortedDesc ?
+                                                      ' 🔽'
+                                                     : ' 🔼'
+                                                 : ''
+                                            }
+                                        </span>
                                     </th>
                                 ))
                             }

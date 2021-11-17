@@ -2,7 +2,10 @@ import {Button, FormControl, InputGroup} from "react-bootstrap";
 import {Link} from "react-router-dom";
 
 
-function Header({filter,setFilter}){
+function Header({filter,setFilter,setAddOpen}){
+    const onClickButton =()=>{
+        setAddOpen(true)
+    }
     return(
         <InputGroup className="mb-3">
             <FormControl
@@ -10,8 +13,8 @@ function Header({filter,setFilter}){
                 onChange={(e)=>setFilter(e.target.value)}
                 placeholder="Введите запрос..."
             />
-            <Button variant="outline-primary">
-                <Link to="/add">Добавить</Link>
+            <Button variant="outline-primary" onClick={onClickButton}>
+                Добавить
             </Button>
         </InputGroup>
     )

@@ -9,7 +9,11 @@ import axios from "axios";
 
 function actionDashboard(){
     return dispatch=>{
-        axios.get('http://localhost:8080/get-dashboard')
+        axios.get('http://localhost:8080/get-dashboard',
+            {headers:{
+                "Authorization":`Bearer ${sessionStorage.getItem('token')}`
+                }
+            })
             .then(({data})=>dispatch(showData(data)))
             .catch(error=>console.log(error))
     }
