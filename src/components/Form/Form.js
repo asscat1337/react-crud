@@ -1,17 +1,15 @@
 import {useDispatch,useSelector} from 'react-redux'
 import {useForm} from 'react-hook-form'
 import {useEffect} from 'react'
-import {Form,Button} from "react-bootstrap";
+import {Form,Button,FloatingLabel} from "react-bootstrap";
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as yup from 'yup'
 import actionDepartment from '../../store/action/actionDepartment'
-import actionState from "../../store/action/actionState";
 import {addActionDashboard,updateDashboard} from "../../store/action/actionDashboard";
 
 function FormData({editable,current}){
     const dispatch = useDispatch();
-    const state = useSelector(state=>state.state);
-    const department = useSelector(state=>state.department);
+    const department = useSelector(state=>state.dashboard.department);
 
     const schema = yup.object({
         from:yup.string().required(`'От кого' должно быть заполнено`),
@@ -25,12 +23,10 @@ function FormData({editable,current}){
     })
 
     useEffect(()=>{
-        if(!state.length || !department.length){
+        if(!department.length){
             dispatch(actionDepartment())
-            dispatch(actionState())
         }
         if(current){
-            //console.log(current.state)
             setValue("from",current.from)
             setValue("patient",current.patient)
         }
@@ -88,18 +84,16 @@ function FormData({editable,current}){
                         }
                     </Form.Select>
                 </Form.Group>
-
-                <Form.Group>
-                    <Form.Label>Состояние</Form.Label>
-                    <Form.Select
-                        {...register('state')}
-                    >
-                        <option disabled>Выберите состояние</option>
-                        {state.map(item=>(
-                            <option key={item.state_id}>{item.title}</option>
-                        ))}
-                    </Form.Select>
-                </Form.Group>
+            {!editable &&
+            <FloatingLabel controlId="floatingTextarea2" label="Состояние">
+                <Form.Control
+                    {...register('state')}
+                    as="textarea"
+                    placeholder="Введите состояние"
+                    style={{height:'100px'}}
+                />
+            </FloatingLabel>
+            }
                 <Button type="submit">{editable ?  'Редактировать' : 'Добавить' }</Button>
             </Form>
     )

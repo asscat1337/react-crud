@@ -1,14 +1,15 @@
-import {Table,Button} from "react-bootstrap";
-import {useTable} from 'react-table';
+import {Table, Button} from "react-bootstrap";
+import {useTable,useGlobalFilter} from 'react-table';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import {useMemo,useEffect} from 'react';
 import {useSelector,useDispatch} from 'react-redux'
 import {actionDashboard,deleteData} from "../../store/action/actionDashboard";
+import Header from "../Header/Header";
 
 
-function TableContent({setOpen,setCurrent}){
+function TableContent({setOpen,setCurrent,setStateModal,setCurrentState}){
     const dispatch = useDispatch();
-    const data = useSelector(state=>state.data)
+    const data = useSelector(state=>state.dashboard.data);
     useEffect(()=>{
         if(!data.length){
             dispatch(actionDashboard())
@@ -19,8 +20,12 @@ function TableContent({setOpen,setCurrent}){
         dispatch(deleteData(data))
     }
     const showModal=(current)=>{
-        setCurrent(current)
+        setCurrent(current);
         setOpen(true)
+    }
+    const showStateModal=(current)=>{
+        setStateModal(true);
+        setCurrentState(current)
     }
     const columns = useMemo(()=>[
         {
@@ -50,6 +55,9 @@ function TableContent({setOpen,setCurrent}){
                     <Button variant="primary" onClick={()=>onDeleteData(row.original.dashboard_id)}>
                         <i className="bi bi-trash"/>
                     </Button>
+                    <Button variant="primary" onClick={()=>showStateModal(row.original.dashboard_id)}>
+                        <i className="bi bi-plus"/>
+                    </Button>
                 </>
             )
         }
@@ -59,9 +67,14 @@ function TableContent({setOpen,setCurrent}){
         getTableBodyProps,
         headerGroups,
         rows,
-        prepareRow
-    } = useTable({columns,data})
+        prepareRow,
+        state,
+        setGlobalFilter
+    } = useTable({columns,data},useGlobalFilter);
+    const {globalFilter} = state;
     return(
+        <>
+        <Header filter={globalFilter} setFilter={setGlobalFilter}/>
         <Table striped bordered hover {...getTableProps()}>
                 <thead>
                 {
@@ -103,6 +116,7 @@ function TableContent({setOpen,setCurrent}){
                 }
                 </tbody>
         </Table>
+            </>
         )
 }
 

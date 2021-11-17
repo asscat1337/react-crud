@@ -1,20 +1,19 @@
 const {DataTypes} = require('sequelize');
 const connection = require('./config');
 
-
-const State = connection.define('state',{
-    state_id:{
-        primaryKey:true,
+const User = connection.define('user',{
+    user_id:{
         autoIncrement:true,
+        primaryKey:true,
         type:DataTypes.INTEGER,
         allowNull:false
     },
-    title:{
+    login:{
         type:DataTypes.STRING,
         allowNull: false
     },
-    patient_id:{
-        type:DataTypes.INTEGER,
+    password:{
+        type:DataTypes.STRING,
         allowNull:false
     }
 },{
@@ -22,4 +21,5 @@ const State = connection.define('state',{
     timestamps:false
 })
 
-module.exports = State
+
+module.exports = User

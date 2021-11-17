@@ -5,7 +5,15 @@ class dashboardController{
     async getData(req,res,next){
         try{
             await Dashboard.findAll()
-                .then(data=>res.json(data))
+                .then(data=>{
+                    const mappedData = data.map(item=>{
+                        return {
+                            ...item.dataValues,
+                            children:[]
+                        }
+                    })
+                    return res.json(mappedData)
+                })
         }catch (e) {
             console.log(e)
         }
@@ -20,7 +28,10 @@ class dashboardController{
     }
     async getState(req,res,next){
         try{
-            await State.findAll()
+            const {id} = req.params
+            await State.findAll({where:{
+                patient_id:id
+                }})
                 .then(data=>res.json(data))
         }catch (e) {
             console.log(e)
@@ -30,6 +41,16 @@ class dashboardController{
         try{
             await Dashboard.create(req.body)
                 .then(res.send().status(200))
+        }catch (e) {
+            console.log(e)
+        }
+    }
+    async addState(req,res,next){
+        try{
+            const {patient_id,title} = req.body
+            await State.create({
+                title,patient_id
+            }).then(data=>res.json(data))
         }catch (e) {
             console.log(e)
         }
@@ -54,6 +75,19 @@ class dashboardController{
                 }
             }).then(res.send().status(200))
         }catch(e){
+            console.log(e)
+        }
+    }
+    async updatePatientState(req,res,next){
+        try{
+            const {patient_id,title} = req.body
+            await Dashboard.update({state:title},{
+                where:{
+                    dashboard_id:patient_id
+                }
+            }).then(res.send().status(200))
+        }
+        catch (e) {
             console.log(e)
         }
     }

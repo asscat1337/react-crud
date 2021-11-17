@@ -4,7 +4,6 @@ function Add() {
         <>
             <div>Hello</div>
             <FormData/>
-
         </>
     )
 }

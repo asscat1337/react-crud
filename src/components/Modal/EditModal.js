@@ -4,7 +4,7 @@ import {Modal,Button} from 'react-bootstrap'
 import FormData from '../Form/Form'
 
 function EditModal({open,setOpen,current}){
-  const data = useSelector(state=>state.data.find(item=>item.dashboard_id===current))
+  const data = useSelector(state=>state.dashboard.data.find(item=>item.dashboard_id===current))
   const [editable] = useState(true)
     return (
         <>  
@@ -22,9 +22,6 @@ function EditModal({open,setOpen,current}){
             <Button variant="secondary" onClick={()=>setOpen(false)}>
               Close
             </Button>
-            {/* <Button variant="primary" onClick={()=>setOpen(false)}>
-              Save Changes
-            </Button> */}
           </Modal.Footer>
         </Modal>
       </>

@@ -1,31 +1,35 @@
-import {useState} from 'react'
-import {Link} from "react-router-dom";
-import TableContent from "./components/Table/Table";
-import {Button} from  'react-bootstrap'
-import EditModal from './components/Modal/EditModal';
+import React, {useState} from 'react'
+import {Routes,Navigate, Route} from 'react-router-dom'
+import {useSelector} from "react-redux";
 import 'bootstrap/scss/bootstrap.scss'
 import './App.css';
+import Add from "./components/pages/Add/Add";
+import Login from "./components/pages/Login/Login";
+import Dashboard from "./components/pages/Dashboard/Dashboard";
+import PrivateRoute from "./components/routing/PrivateRoute";
+import AppContext from "./hooks/context";
 
 function App() {
-  const [open,setOpen] = useState(false);
-  const [current,setCurrent] = useState(null)
   return (
-    <div className="App">
-    <EditModal 
-      open={open}
-      setOpen={setOpen}
-      current={current}
-    />
-      <h1>Hello</h1>
-        <Button variant="outline-primary">
-          <Link to="/add">Добавить</Link>
-        </Button>
-        <TableContent
-           setOpen={setOpen}
-           setCurrent={setCurrent}
-        />
-    </div>
-  );
+        <Routes>
+            <Route path="/">
+                <Route path="/dashboard"
+                       element={
+                           <PrivateRoute>
+                               <Dashboard/>
+                           </PrivateRoute>
+                       }>
+                </Route>
+                <Route path="/add"
+                       element={
+                           <PrivateRoute>
+                               <Add/>
+                           </PrivateRoute>
+                       }
+                       exact/>
+            </Route>
+            <Route path="/login" element={<Login/>} exact/>
+        </Routes>
+  )
 }
-
 export default App;

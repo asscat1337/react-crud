@@ -1,4 +1,10 @@
-import {showData,addDashboard,deleteDashboard,updateActionDashboard} from "../reducer/reducer";
+import {
+    showData,
+    addDashboard,
+    deleteDashboard,
+    updateActionDashboard,
+    updatePatientState
+} from "../reducer/reducer";
 import axios from "axios";
 
 function actionDashboard(){
@@ -17,7 +23,6 @@ function addActionDashboard(data){
 }
 function deleteData(data){
     return dispatch=>{
-        console.log(data)
         axios.delete('http://localhost:8080/delete-dashboard',{data:{id:data}})
         .then(()=>dispatch(deleteDashboard(data)))
         .catch(error=>console.log(error))
@@ -30,4 +35,12 @@ function updateDashboard(data){
         .catch(error=>console.log(error))
     }
 }
-export {addActionDashboard,actionDashboard,deleteData,updateDashboard}
+function actionUpdateStateDashboard(data){
+    console.log(data)
+    return dispatch=>{
+        axios.post('http://localhost:8080/update-state-dashboard',data)
+            .then(()=>dispatch(updatePatientState(data)))
+            .catch(error=>console.log(error))
+    }
+}
+export {addActionDashboard,actionDashboard,deleteData,updateDashboard,actionUpdateStateDashboard}
