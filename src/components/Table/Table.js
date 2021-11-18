@@ -1,15 +1,20 @@
-import {Table, Button,Pagination} from "react-bootstrap";
+import {Table, Button} from "react-bootstrap";
 import {useTable,useGlobalFilter,useSortBy} from 'react-table';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import {useMemo,useEffect} from 'react';
+import {useMemo,useEffect,useContext} from 'react';
 import {useSelector,useDispatch} from 'react-redux'
 import {actionDashboard,deleteData} from "../../store/action/actionDashboard";
-import Header from "../Header/Header";
-
+import HeaderTableComponent from "../Header/HeaderTableComponent/HeaderTableComponent";
+import AppContext from "../../hooks/context";
+import Loading from "../Loading/Loading";
+import theme from '../../styles/theme.module.scss'
 
 function TableContent({setOpen,setCurrent,setStateModal,setCurrentState,setAddOpen}){
+    const {stateTheme} = useContext(AppContext)
+    console.log(stateTheme)
     const dispatch = useDispatch();
     const data = useSelector(state=>state.dashboard.data);
+    const loading = useSelector(state=>state.dashboard.loading)
     useEffect(()=>{
         if(!data.length){
             dispatch(actionDashboard())
@@ -53,7 +58,7 @@ function TableContent({setOpen,setCurrent,setStateModal,setCurrentState,setAddOp
                         <i className="bi bi-pencil-fill"/>
                     </Button>
                     <Button variant="primary" onClick={()=>onDeleteData(row.original.dashboard_id)}>
-                        <i className="bi bi-trash"/>
+                            <i className="bi bi-trash"/>
                     </Button>
                     <Button variant="primary" onClick={()=>showStateModal(row.original.dashboard_id)}>
                         <i className="bi bi-plus"/>
@@ -72,17 +77,24 @@ function TableContent({setOpen,setCurrent,setStateModal,setCurrentState,setAddOp
         setGlobalFilter
     } = useTable({columns,data},useGlobalFilter,useSortBy);
     const {globalFilter} = state;
+
+    if(loading){
+        return <Loading style={{"margin":"100px auto"}}/>
+    }
+
     return(
         <>
-        <Header filter={globalFilter} setFilter={setGlobalFilter} setAddOpen={setAddOpen}/>
-        <Table striped bordered hover {...getTableProps()}>
+        <HeaderTableComponent filter={globalFilter} setFilter={setGlobalFilter} setAddOpen={setAddOpen}/>
+        <Table striped bordered hover={!stateTheme} {...getTableProps()}>
                 <thead>
                 {
                     headerGroups.map(headerGroup=>(
                         <tr {...headerGroup.getHeaderGroupProps()}>
                             {
                                 headerGroup.headers.map(column=>(
-                                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                    <th {...column.getHeaderProps(column.getSortByToggleProps())}
+                                        className={stateTheme ? theme.darkTd : ''}
+                                    >
                                         {
                                             column.render('Header')
                                         }
@@ -107,7 +119,7 @@ function TableContent({setOpen,setCurrent,setStateModal,setCurrentState,setAddOp
                         rows.map((row,i)=>{
                             prepareRow(row)
                             return (
-                                <tr {...row.getRowProps()}>
+                                <tr {...row.getRowProps()} className={stateTheme ? theme.hoverTd  : ''}>
                                     {
                                         row.cells.map(cell=>{
                                             return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
@@ -118,7 +130,7 @@ function TableContent({setOpen,setCurrent,setStateModal,setCurrentState,setAddOp
                         })
                     ) : (
                         <tr>
-                            <td>Нет данных</td>
+                            <td colSpan="1000">Нет данных</td>
                         </tr>
                     )
                 }

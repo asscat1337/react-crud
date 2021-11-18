@@ -1,6 +1,7 @@
 const Dashboard = require('../model/Dasboard');
 const Department = require('../model/Department');
 const State = require('../model/State');
+const dayjs = require('dayjs')
 class dashboardController{
     async getData(req,res,next){
         try{
@@ -21,7 +22,15 @@ class dashboardController{
     async getDepartment(req,res,next){
         try {
             await Department.findAll()
-                .then(data=>res.json(data))
+                .then(data=>{
+                    const mappedData=data.map(item=>{
+                        return {
+                            value:item.title,
+                            label:item.title
+                        }
+                    })
+                    return res.json(mappedData)
+                })
         }catch (e) {
             console.log(e)
         }
@@ -49,7 +58,7 @@ class dashboardController{
         try{
             const {patient_id,title} = req.body
             await State.create({
-                title,patient_id
+                title,patient_id,date:dayjs().format('YYYY-MM-DD HH:mm:ssZ[Z]')
             }).then(data=>res.json(data))
         }catch (e) {
             console.log(e)

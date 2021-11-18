@@ -3,9 +3,9 @@ import {Routes,Navigate, Route} from 'react-router-dom'
 import {useSelector} from "react-redux";
 import 'bootstrap/scss/bootstrap.scss'
 import './App.css';
-import Add from "./components/pages/Add/Add";
-import Login from "./components/pages/Login/Login";
-import Dashboard from "./components/pages/Dashboard/Dashboard";
+import Add from "./pages/Add/Add";
+import Login from "./pages/Login/Login";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import PrivateRoute from "./components/routing/PrivateRoute";
 
 function App() {

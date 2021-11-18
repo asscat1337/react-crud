@@ -13,6 +13,10 @@ const State = connection.define('state',{
         type:DataTypes.STRING,
         allowNull: false
     },
+    date:{
+        type:DataTypes.DATE,
+        allowNull:false
+    },
     patient_id:{
         type:DataTypes.INTEGER,
         allowNull:false

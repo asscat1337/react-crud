@@ -7,7 +7,7 @@ import {yupResolver} from "@hookform/resolvers/yup";
 import styles from './Login.module.scss'
 import {Form,Button} from 'react-bootstrap';
 
-import {LoginUser} from "../../../store/action/actionAuth";
+import {LoginUser} from "../../store/action/actionAuth";
 
 function Login(){
     const navigate = useNavigate();

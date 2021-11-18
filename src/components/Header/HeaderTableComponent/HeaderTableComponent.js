@@ -2,7 +2,7 @@ import {Button, FormControl, InputGroup} from "react-bootstrap";
 import {Link} from "react-router-dom";
 
 
-function Header({filter,setFilter,setAddOpen}){
+function HeaderTableComponent({filter,setFilter,setAddOpen}){
     const onClickButton =()=>{
         setAddOpen(true)
     }
@@ -21,4 +21,4 @@ function Header({filter,setFilter,setAddOpen}){
 }
 
 
-export default Header
+export default HeaderTableComponent

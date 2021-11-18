@@ -1,27 +1,23 @@
-import {useEffect} from 'react'
+import {useContext, useState} from 'react'
 import {Modal,Button} from "react-bootstrap";
-import {useSelector,useDispatch} from "react-redux";
-import FormState from "../Form/FormState";
-import {actionState} from "../../store/action/actionState";
+import AppContext from "../../hooks/context";
+import theme from '../../styles/theme.module.scss'
 import Form from '../Form/Form'
 
 function AddModal({openAdd,setAddOpen}) {
-    // const dispatch = useDispatch();
-    // useEffect(()=>{
-    //     if(!state.children.length){
-    //         dispatch(actionState(currentState))
-    //     }
-    // },[dispatch,currentState,stateOpen]);
+    const {stateTheme} = useContext(AppContext)
     return(
-        <Modal show={openAdd} fullscreen onHide={()=>setAddOpen(false)}>
-            <Modal.Header closeButton>
-                <Modal.Title>
-                    <h1>Добавить</h1>
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <Form/>
-            </Modal.Body>
+        <Modal show={openAdd} onHide={()=>setAddOpen(false)}>
+            <div className={stateTheme ? theme.themeModal  : ''}>
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        <h1>Добавить</h1>
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form/>
+                </Modal.Body>
+            </div>
         </Modal>
     )
 }

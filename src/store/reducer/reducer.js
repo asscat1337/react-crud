@@ -4,7 +4,7 @@ import {
     ADD_DASHBOARD,
     DELETE_DATA,
     UPDATE_DASHBOARD,
-    ADD_STATE, UPDATE_PATIENT_STATE
+    ADD_STATE, UPDATE_PATIENT_STATE, LOAD_DASHBOARD
 } from "../types";
 
 
@@ -55,6 +55,7 @@ function reducer(state=initialState,action){
         case DELETE_DATA:{
             return {
                 ...state,
+                loading:false,
                 data:state.data.filter(item=>item.dashboard_id !== action.payload)
             }
         }  
@@ -102,6 +103,12 @@ function reducer(state=initialState,action){
                     return item
                 })
             }
+        case LOAD_DASHBOARD :
+            return {
+                ...state,
+                error:'',
+                loading: true
+            }
         default: return state
 
     }
@@ -116,5 +123,6 @@ export const deleteDashboard=payload=>({type:DELETE_DATA,payload});
 export const updateActionDashboard=payload=>({type:UPDATE_DASHBOARD,payload});
 export const addState=payload=>({type:ADD_STATE,payload});
 export const updatePatientState=payload=>({type:UPDATE_PATIENT_STATE,payload});
+export const loadDashboard=payload=>({type:LOAD_DASHBOARD,payload})
 
 export default reducer

@@ -1,4 +1,4 @@
-import FormData from "../../Form/Form"
+import FormData from "../../components/Form/Form";
 function Add() {
     return (
         <>

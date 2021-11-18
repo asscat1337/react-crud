@@ -3,12 +3,14 @@ import {
     addDashboard,
     deleteDashboard,
     updateActionDashboard,
-    updatePatientState
+    updatePatientState,
+    loadDashboard
 } from "../reducer/reducer";
 import axios from "axios";
 
 function actionDashboard(){
     return dispatch=>{
+        dispatch(loadDashboard())
         axios.get('http://localhost:8080/get-dashboard',
             {headers:{
                 "Authorization":`Bearer ${sessionStorage.getItem('token')}`
@@ -27,6 +29,7 @@ function addActionDashboard(data){
 }
 function deleteData(data){
     return dispatch=>{
+        dispatch(loadDashboard())
         axios.delete('http://localhost:8080/delete-dashboard',{data:{id:data}})
         .then(()=>dispatch(deleteDashboard(data)))
         .catch(error=>console.log(error))

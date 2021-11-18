@@ -21,7 +21,10 @@ function StateModal({stateOpen,setStateOpen,currentState}) {
                 </Modal.Header>
                 <Modal.Body>
                     {state.children.map(item=>(
-                        <div key={item.state_id}>{item.title}</div>
+                        <div key={item.state_id}>
+                            <div>{item.title}</div>
+                            <div>{item.date}</div>
+                        </div>
                     ))}
                     <FormState
                         currentState={currentState}
