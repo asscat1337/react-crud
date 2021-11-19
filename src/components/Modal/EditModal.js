@@ -12,15 +12,17 @@ function EditModal({open,setOpen,current}){
     return (
         <>  
         <Modal show={open} onHide={()=>setOpen(false)}>
-            <div className={stateTheme ? theme.themeModal : ''}>
+            <div className={stateTheme === 'dark' ? theme.themeModal : ''}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal heading</Modal.Title>
+                    <Modal.Title>
+                        Редактирование
+                    </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <FormData
-                        editable={editable}
-                        current={data}
-                    />
+                        <FormData
+                            editable={editable}
+                            current={data}
+                        />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={()=>setOpen(false)}>

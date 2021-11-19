@@ -3,15 +3,14 @@ import {useTable,useGlobalFilter,useSortBy} from 'react-table';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import {useMemo,useEffect,useContext} from 'react';
 import {useSelector,useDispatch} from 'react-redux'
-import {actionDashboard,deleteData} from "../../store/action/actionDashboard";
+import {actionDashboard} from "../../store/action/actionDashboard";
 import HeaderTableComponent from "../Header/HeaderTableComponent/HeaderTableComponent";
 import AppContext from "../../hooks/context";
 import Loading from "../Loading/Loading";
 import theme from '../../styles/theme.module.scss'
 
-function TableContent({setOpen,setCurrent,setStateModal,setCurrentState,setAddOpen}){
-    const {stateTheme} = useContext(AppContext)
-    console.log(stateTheme)
+function TableContent({setOpen,setCurrent,setStateModal,setCurrentState,setAddOpen,setConfirmModal}){
+    const {stateTheme,setConfirmData} = useContext(AppContext)
     const dispatch = useDispatch();
     const data = useSelector(state=>state.dashboard.data);
     const loading = useSelector(state=>state.dashboard.loading)
@@ -22,7 +21,8 @@ function TableContent({setOpen,setCurrent,setStateModal,setCurrentState,setAddOp
     },[])
 
     const onDeleteData=(data)=>{
-        dispatch(deleteData(data))
+        setConfirmModal(true)
+        setConfirmData(data)
     }
     const showModal=(current)=>{
         setCurrent(current);
@@ -93,7 +93,7 @@ function TableContent({setOpen,setCurrent,setStateModal,setCurrentState,setAddOp
                             {
                                 headerGroup.headers.map(column=>(
                                     <th {...column.getHeaderProps(column.getSortByToggleProps())}
-                                        className={stateTheme ? theme.darkTd : ''}
+                                        className={stateTheme === 'dark' ? theme.darkTd : ''}
                                     >
                                         {
                                             column.render('Header')

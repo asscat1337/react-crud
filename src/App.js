@@ -9,7 +9,6 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import PrivateRoute from "./components/routing/PrivateRoute";
 
 function App() {
-    const isAuth = useSelector(state=>state.auth.isAuth)
   return (
         <Routes>
             <Route path="/" element={

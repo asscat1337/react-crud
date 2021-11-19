@@ -15,7 +15,7 @@ class AuthController{
                     login:findUser.login,
                     id:findUser.user_id
                 },process.env.ACCESS_SECRET,{
-                    "expiresIn":"2h"
+                    "expiresIn":"3 days"
                 })
                 return res.status(200).json({
                     success:true,

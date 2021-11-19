@@ -8,7 +8,7 @@ function AddModal({openAdd,setAddOpen}) {
     const {stateTheme} = useContext(AppContext)
     return(
         <Modal show={openAdd} onHide={()=>setAddOpen(false)}>
-            <div className={stateTheme ? theme.themeModal  : ''}>
+            <div className={stateTheme ==='dark' ? theme.themeModal  : ''}>
                 <Modal.Header closeButton>
                     <Modal.Title>
                         <h1>Добавить</h1>

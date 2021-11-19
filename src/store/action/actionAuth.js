@@ -1,4 +1,4 @@
-import {actionLoginUser,loadAuthUser} from "../reducer/authReducer";
+import {actionLoginUser,loadAuthUser,logoutUser} from "../reducer/authReducer";
 import axios from 'axios'
 
 
@@ -15,7 +15,11 @@ function LoginUser(user){
             .catch(error=>console.log(error))
     }
 }
+function LogoutUser(){
+    return dispatch=>{
+        dispatch(logoutUser())
+    }
+}
 
 
-
-export {LoginUser}
+export {LoginUser,logoutUser}
