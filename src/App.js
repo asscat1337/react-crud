@@ -8,6 +8,8 @@ import Login from "./pages/Login/Login";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import PrivateRoute from "./components/routing/PrivateRoute";
 
+console.log(process.env.REACT_APP_KEY)
+
 function App() {
   return (
         <Routes>
