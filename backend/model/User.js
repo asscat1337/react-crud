@@ -12,6 +12,10 @@ const User = connection.define('user',{
         type:DataTypes.STRING,
         allowNull: false
     },
+    fio:{
+        type:DataTypes.STRING,
+        allowNull:false
+    },
     password:{
         type:DataTypes.STRING,
         allowNull:false

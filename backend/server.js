@@ -6,6 +6,7 @@ const app = express();
 
 const router = require('./router/router');
 const authRouter = require('./router/authRouter');
+const adminRouter = require('./router/adminRouter')
 
 
 app.use(express.static(path.resolve(__dirname,'../build')));
@@ -15,6 +16,7 @@ app.use(cors());
 
 app.use('/',router);
 app.use('/auth',authRouter);
+app.use('/admin',adminRouter)
 
 app.get('*',(req,res)=>{
     res.sendFile(path.resolve(__dirname,'../build','index.html'))

@@ -6,6 +6,7 @@ import styles from './HeaderPage.module.scss'
 
 
 function HeaderPage({setTheme,stateTheme}) {
+    const fio = sessionStorage.getItem('fio');
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const logout=()=>{
@@ -23,10 +24,10 @@ function HeaderPage({setTheme,stateTheme}) {
                 <Form.Check
                     type="switch"
                     id="custom-switch"
-                    label="check this switch"
                     onChange={onChangeTheme}
                 />
-                <Button variant="primary" onClick={logout}>Выход</Button>
+                <div className={styles.fio}>{fio}</div>
+                <Button variant="primary" onClick={logout} className={styles.btn}>Выход</Button>
         </div>
     )
 }

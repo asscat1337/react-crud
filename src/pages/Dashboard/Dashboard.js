@@ -48,7 +48,7 @@ function Dashboard(){
                     confirmModal={confirmModal}
                     setConfirmModal={setConfirmModal}
                 />
-                {!loading && <h1>Hello</h1>}
+                {!loading && <h1>Журная учета состояние пациентов</h1>}
                 <TableContent
                     setOpen={setOpen}
                     setAddOpen={setAddOpen}

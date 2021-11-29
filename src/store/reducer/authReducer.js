@@ -7,7 +7,6 @@ const initialState = {
 }
 
 const isLogin = sessionStorage.getItem('isAuth');
-console.log(isLogin)
 
 function authReducer(state=initialState,action){
     switch (action.type) {

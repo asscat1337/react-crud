@@ -11,6 +11,7 @@ function LoginUser(user){
                 dispatch(actionLoginUser(user))
                 sessionStorage.setItem('token',data.token)
                 sessionStorage.setItem('isAuth',data.success)
+                sessionStorage.setItem('fio',data.fio)
             })
             .catch(error=>console.log(error))
     }

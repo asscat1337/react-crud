@@ -13,13 +13,15 @@ class AuthController{
             if(hashedPassword){
                 const JWTToken = jwt.sign({
                     login:findUser.login,
+                    fio:findUser.fio,
                     id:findUser.user_id
                 },process.env.ACCESS_SECRET,{
                     "expiresIn":"3 days"
                 })
                 return res.status(200).json({
                     success:true,
-                    token:JWTToken
+                    token:JWTToken,
+                    fio:findUser.fio
                 })
             }
         }catch (e) {
