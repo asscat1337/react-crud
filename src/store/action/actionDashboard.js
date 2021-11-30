@@ -7,6 +7,7 @@ import {
     loadDashboard
 } from "../reducer/reducer";
 import axios from "axios";
+import dayjs from "dayjs";
 
 function actionDashboard(){
     return dispatch=>{
@@ -43,10 +44,10 @@ function updateDashboard(data){
     }
 }
 function actionUpdateStateDashboard(data){
-    console.log(data)
     return dispatch=>{
-        axios.post('http://localhost:8080/update-state-dashboard',data)
-            .then(()=>dispatch(updatePatientState(data)))
+        axios.post('http://localhost:8080/update-state-dashboard',
+            {...data,last_state_update:dayjs().format('YYYY-MM-DD')})
+            .then(()=>dispatch(updatePatientState({...data,last_state_update:dayjs().format('YYYY-MM-DD')})))
             .catch(error=>console.log(error))
     }
 }

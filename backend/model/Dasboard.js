@@ -24,6 +24,10 @@ const Dashboard = connection.define('dashboard',{
     state:{
         type:DataTypes.STRING,
         allowNull:false
+    },
+    last_state_update:{
+        type:DataTypes.DATEONLY,
+        allowNull:false
     }
 },{
     freezeTableName:true,

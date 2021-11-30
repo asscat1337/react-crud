@@ -1,5 +1,6 @@
 import {useDispatch} from "react-redux";
 import {Form,Button} from "react-bootstrap";
+import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 import {useNavigate} from 'react-router-dom'
 import {logoutUser} from "../../../store/reducer/authReducer";
 import styles from './HeaderPage.module.scss'
@@ -21,10 +22,14 @@ function HeaderPage({setTheme,stateTheme}) {
     }
     return (
         <div className={styles.header}>
-                <Form.Check
-                    type="switch"
-                    id="custom-switch"
-                    onChange={onChangeTheme}
+                <BootstrapSwitchButton
+                    size="sm"
+                    onstyle="light"
+                    offstyle="light"
+                    checked={stateTheme !== 'dark'}
+                    onlabel='🌚'
+                    offlabel='🌞'
+                        onChange={onChangeTheme}
                 />
                 <div className={styles.fio}>{fio}</div>
                 <Button variant="primary" onClick={logout} className={styles.btn}>Выход</Button>

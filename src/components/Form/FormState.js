@@ -6,7 +6,7 @@ import {FloatingLabel,Form,Button} from 'react-bootstrap'
 import {addActionState} from "../../store/action/actionState";
 import {actionUpdateStateDashboard} from "../../store/action/actionDashboard";
 
-function FormState({currentState}) {
+function FormState({currentState,style}) {
     const dispatch = useDispatch()
     const schema = yup.object({
         state:yup.string()
@@ -28,7 +28,7 @@ function FormState({currentState}) {
         reset({})
     }
     return (
-        <Form onSubmit={handleSubmit(onClickData)}>
+        <Form onSubmit={handleSubmit(onClickData)} style={style}>
             <FloatingLabel label="Оставьте..." controlId="floatingTextarea1">
                 <Form.Control
                     {...register('state')}

@@ -1,0 +1,13 @@
+.states {
+  .state{
+    border: 1px solid black;
+    border-radius: 4px;
+    margin-top: 10px;
+    &:last-child{
+     margin-bottom: 10px;
+    }
+  }
+}
+.modal{
+  height: 84%;
+}

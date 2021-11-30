@@ -8,6 +8,7 @@ import HeaderTableComponent from "../Header/HeaderTableComponent/HeaderTableComp
 import AppContext from "../../hooks/context";
 import Loading from "../Loading/Loading";
 import theme from '../../styles/theme.module.scss'
+import "./Table.scss"
 
 function TableContent({setOpen,setCurrent,setStateModal,setCurrentState,setAddOpen,setConfirmModal}){
     const {stateTheme,setConfirmData} = useContext(AppContext)
@@ -47,7 +48,15 @@ function TableContent({setOpen,setCurrent,setStateModal,setCurrentState,setAddOp
         },
         {
             Header:'Состояние',
-            accessor: 'state'
+            accessor: 'state',
+            Cell:({row})=>(
+                <>
+                <div className="modified">
+                    <span>Последняя дата:{row.original.last_state_update}</span>
+                    <span>Текущее состояние:{row.original.state}</span>
+                </div>
+                </>
+            )
         },
         {
             Header:()=>null,

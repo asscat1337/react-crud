@@ -17,6 +17,7 @@ const initialState = {
 }
 
 function reducer(state=initialState,action){
+    console.log(action.payload)
     switch (action.type) {
         case SHOW_DATA :
             return {
@@ -97,7 +98,8 @@ function reducer(state=initialState,action){
                     if(item.dashboard_id === action.payload.patient_id){
                         return {
                             ...item,
-                            state:action.payload.title
+                            state:action.payload.title,
+                            last_state_update:action.payload.last_state_update
                         }
                     }
                     return item

@@ -90,7 +90,7 @@ class dashboardController{
     async updatePatientState(req,res,next){
         try{
             const {patient_id,title} = req.body
-            await Dashboard.update({state:title},{
+            await Dashboard.update({state:title,last_state_update:dayjs().format('YYYY-MM-DD')},{
                 where:{
                     dashboard_id:patient_id
                 }

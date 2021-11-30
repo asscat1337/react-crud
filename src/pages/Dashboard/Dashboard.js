@@ -28,11 +28,6 @@ function Dashboard(){
                     stateTheme={stateTheme}
                 />
                 }
-                <EditModal
-                    open={open}
-                    setOpen={setOpen}
-                    current={current}
-                />
                 {stateOpen &&
                 <StateModal
                     stateOpen={stateOpen}
@@ -40,6 +35,11 @@ function Dashboard(){
                     currentState={currentState}
                 />
                 }
+                <EditModal
+                    open={open}
+                    setOpen={setOpen}
+                    current={current}
+                />
                 <AddModal
                     openAdd={openAdd}
                     setAddOpen={setAddOpen}
@@ -48,7 +48,7 @@ function Dashboard(){
                     confirmModal={confirmModal}
                     setConfirmModal={setConfirmModal}
                 />
-                {!loading && <h1>Журная учета состояние пациентов</h1>}
+                {!loading && <h1>Журнал учета состояния пациентов</h1>}
                 <TableContent
                     setOpen={setOpen}
                     setAddOpen={setAddOpen}
