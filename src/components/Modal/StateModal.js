@@ -2,7 +2,7 @@ import {useEffect,useContext} from 'react'
 import {Modal,Button} from "react-bootstrap";
 import {useSelector,useDispatch} from "react-redux";
 import FormState from "../Form/FormState";
-import {actionState} from "../../store/action/actionState";
+// import {actionState} from "../../store/action/actionState";
 import styles from './StateModal.module.scss'
 import theme from '../../styles/theme.module.scss'
 import AppContext from "../../hooks/context";
@@ -14,7 +14,7 @@ function StateModal({stateOpen,setStateOpen,currentState}) {
     const state = useSelector(state=>state.dashboard.data.find(item=>item.dashboard_id === currentState));
     useEffect(()=>{
          if(!state.children.length){
-            dispatch(actionState(currentState))
+            // dispatch(actionState(currentState))
         }
     },[dispatch,currentState,stateOpen]);
         return(

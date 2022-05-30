@@ -1,39 +1,41 @@
-import {Table, Button} from "react-bootstrap";
+import React from 'react'
 import {useTable,useGlobalFilter,useSortBy} from 'react-table';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import {useMemo,useEffect,useContext} from 'react';
 import {useSelector,useDispatch} from 'react-redux'
-import {actionDashboard} from "../../store/action/actionDashboard";
-import HeaderTableComponent from "../Header/HeaderTableComponent/HeaderTableComponent";
-import AppContext from "../../hooks/context";
+import {actionDashboard, getComments} from "../../store/action/actionDashboard";
+import {
+    TableContainer,
+    IconButton,
+    Table,
+    TableHead,
+    TableBody,
+    TableCell,
+    TableRow,
+    Paper, Box, Typography
+} from "@mui/material";
+import {Edit,Delete,ExpandMore} from "@mui/icons-material";
 import Loading from "../Loading/Loading";
-import theme from '../../styles/theme.module.scss'
 import "./Table.scss"
+import {AppContext} from "../../pages/Dashboard/Dashboard";
+import {Link} from "react-router-dom";
+import HeaderTableComponent from "../Header/HeaderTableComponent/HeaderTableComponent";
 
-function TableContent({setOpen,setCurrent,setStateModal,setCurrentState,setAddOpen,setConfirmModal}){
-    const {stateTheme,setConfirmData} = useContext(AppContext)
-    const dispatch = useDispatch();
-    const data = useSelector(state=>state.dashboard.data);
-    const loading = useSelector(state=>state.dashboard.loading)
-    useEffect(()=>{
-        if(!data.length){
-            dispatch(actionDashboard())
-        }
-    },[])
+function TableContent({setDeleteId,data,commentId,setCommentId}){
+    const dispatch = useDispatch()
+    const {setOpen,setEditable,setOpenComments} = React.useContext(AppContext)
+    const loading = useSelector(state=>state?.dashboard?.loading)
 
     const onDeleteData=(data)=>{
-        setConfirmModal(true)
-        setConfirmData(data)
-    }
-    const showModal=(current)=>{
-        setCurrent(current);
+        setDeleteId(data)
         setOpen(true)
     }
-    const showStateModal=(current)=>{
-        setStateModal(true);
-        setCurrentState(current)
+    const showStateModal=async(current)=>{
+        setOpenComments(true)
+        await dispatch(getComments(current))
+        setCommentId(current)
+
     }
-    const columns = useMemo(()=>[
+    const columns = React.useMemo(()=>[
         {
             Header:'От кого',
             accessor: 'from'
@@ -53,25 +55,26 @@ function TableContent({setOpen,setCurrent,setStateModal,setCurrentState,setAddOp
                 <>
                 <div className="modified">
                     <span>Последняя дата:{row.original.last_state_update}</span>
-                    <span>Текущее состояние:{row.original.state}</span>
                 </div>
                 </>
             )
         },
         {
-            Header:()=>null,
+            Header:'Действия',
             accessor:'push',
             Cell:({row})=>(
                 <>
-                    <Button variant="primary" onClick={()=>showModal(row.original.dashboard_id)}>
-                        <i className="bi bi-pencil-fill"/>
-                    </Button>
-                    <Button variant="primary" onClick={()=>onDeleteData(row.original.dashboard_id)}>
-                            <i className="bi bi-trash"/>
-                    </Button>
-                    <Button variant="primary" onClick={()=>showStateModal(row.original.dashboard_id)}>
-                        <i className="bi bi-plus"/>
-                    </Button>
+                    <IconButton variant="primary" onClick={()=>setEditable(true)}>
+                        <Link to={`/edit/${row.original.dashboard_id}`}>
+                            <Edit/>
+                        </Link>
+                    </IconButton>
+                    <IconButton variant="primary" onClick={()=>onDeleteData(row.original.dashboard_id)}>
+                            <Delete/>
+                    </IconButton>
+                    <IconButton variant="primary" onClick={()=>showStateModal(row.original.dashboard_id)}>
+                       <ExpandMore/>
+                    </IconButton>
                 </>
             )
         }
@@ -92,60 +95,60 @@ function TableContent({setOpen,setCurrent,setStateModal,setCurrentState,setAddOp
     }
 
     return(
-        <>
-        <HeaderTableComponent filter={globalFilter} setFilter={setGlobalFilter} setAddOpen={setAddOpen}/>
-        <Table striped bordered hover={!stateTheme} {...getTableProps()}>
-                <thead>
-                {
-                    headerGroups.map(headerGroup=>(
-                        <tr {...headerGroup.getHeaderGroupProps()}>
+        <Box>
+        <HeaderTableComponent globalFilter={globalFilter} setGlobalFilter={setGlobalFilter}/>
+            {data.length ? (
+                <TableContainer component={Paper}>
+                    <Table {...getTableProps()}>
+                        <TableHead>
                             {
-                                headerGroup.headers.map(column=>(
-                                    <th {...column.getHeaderProps(column.getSortByToggleProps())}
-                                        className={stateTheme === 'dark' ? theme.darkTd : ''}
-                                    >
+                                headerGroups.map(headerGroup=>(
+                                    <TableRow {...headerGroup.getHeaderGroupProps()}>
                                         {
-                                            column.render('Header')
-                                        }
-                                        <span>
+                                            headerGroup.headers.map(column=>(
+                                                <TableCell {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                                    {
+                                                        column.render('Header')
+                                                    }
+                                                    <span>
                                             {column.isSorted ?
-                                             column.isSortedDesc ?
-                                                      ' 🔽'
-                                                     : ' 🔼'
-                                                 : ''
+                                                column.isSortedDesc ?
+                                                    ' 🔽'
+                                                    : ' 🔼'
+                                                : ''
                                             }
                                         </span>
-                                    </th>
+                                                </TableCell>
+                                            ))
+                                        }
+                                    </TableRow>
                                 ))
                             }
-                        </tr>
-                    ))
-                }
-                </thead>
-                <tbody {...getTableBodyProps()}>
-                {
-                    rows.length ? (
-                        rows.map((row,i)=>{
-                            prepareRow(row)
-                            return (
-                                <tr {...row.getRowProps()} className={stateTheme ? theme.hoverTd  : ''}>
-                                    {
-                                        row.cells.map(cell=>{
-                                            return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                                        })
-                                    }
-                                </tr>
-                            )
-                        })
-                    ) : (
-                        <tr>
-                            <td colSpan="1000">Нет данных</td>
-                        </tr>
-                    )
-                }
-                </tbody>
-        </Table>
-            </>
+                        </TableHead>
+                        <TableBody {...getTableBodyProps()}>
+                            {
+                                rows.map((row,i)=>{
+                                    prepareRow(row)
+                                    return (
+                                        <TableRow {...row.getRowProps()}>
+                                            {
+                                                row.cells.map(cell=>{
+                                                    return <TableCell {...cell.getCellProps()}>{cell.render('Cell')}</TableCell>
+                                                })
+                                            }
+                                        </TableRow>
+                                    )
+                                })
+                            }
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            ):(
+                <Typography component="h6">
+                    Нет данных 😔
+                </Typography>
+            )}
+        </Box>
         )
 }
 

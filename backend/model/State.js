@@ -10,8 +10,8 @@ const State = connection.define('state',{
         allowNull:false
     },
     title:{
-        type:DataTypes.STRING,
-        allowNull: false
+        type:DataTypes.TEXT,
+        // allowNull: false,
     },
     date:{
         type:DataTypes.DATE,

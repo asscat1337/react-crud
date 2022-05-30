@@ -1,14 +1,15 @@
-import {getDepartment} from "../reducer/reducer";
-import axios from "axios";
+import {createAsyncThunk} from "@reduxjs/toolkit";
+import $http from "../../http/$http";
 
 
 
-function actionDepartment(){
-    return dispatch=>{
-        axios.get('http://localhost:8080/get-department')
-            .then(({data})=>dispatch(getDepartment(data)))
-            .catch(error=>console.log(error))
-    }
+const getDepartment=createAsyncThunk(
+    'department/get-data',
+    async (thunkAPI)=>{
+       const {data} = await $http.get('/get-department')
+        return data
+    })
+
+export {
+    getDepartment
 }
-
-export default actionDepartment

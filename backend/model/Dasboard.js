@@ -1,4 +1,5 @@
 const {DataTypes} = require('sequelize')
+const Department = require('./Department')
 const connection = require('./config');
 
 
@@ -28,10 +29,19 @@ const Dashboard = connection.define('dashboard',{
     last_state_update:{
         type:DataTypes.DATEONLY,
         allowNull:false
+    },
+    departmentId:{
+        type:DataTypes.INTEGER,
+        references:{
+            model:Department,
+            key:'department_id'
+        }
     }
 },{
     freezeTableName:true,
     timestamps:false
 })
+
+Dashboard.hasMany(Department,{foreignKey:'department_id',constraints:false})
 
 module.exports = Dashboard

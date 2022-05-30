@@ -1,65 +1,64 @@
-import {useState,useContext} from "react";
-import {useSelector} from "react-redux";
+import React, {useState} from "react";
+import {Box, Container, Button, CssBaseline, Typography} from "@mui/material";
+import {useDispatch, useSelector} from "react-redux";
 import EditModal from "../../components/Modal/EditModal";
 import StateModal from "../../components/Modal/StateModal";
 import TableContent from "../../components/Table/Table";
 import AddModal from "../../components/Modal/AddModal";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import HeaderPage from "../../components/Header/HeaderPage/HeaderPage";
-import AppContext from "../../hooks/context";
-import theme from '../../styles/theme.module.scss';
+import {deleteDashboard, getDashboard} from "../../store/action/actionDashboard";
+import {getDepartment} from "../../store/action/actionDepartment";
+import HeaderTableComponent from "../../components/Header/HeaderTableComponent/HeaderTableComponent";
+import CustomDialog from "../../components/Dialog/Dialog";
+import CommentsDialog from "../../components/CommentsDialog/CommentsDialog";
+import {set} from "react-hook-form";
+
+
+export const AppContext = React.createContext({})
 
 function Dashboard(){
-    const loading = useSelector(state=>state.dashboard.loading);
-    const [confirmModal,setConfirmModal] = useState(null);
-    const [confirmData,setConfirmData] = useState(null); // состояние текущего id для удаления
-    const [open,setOpen] = useState(false); // состояние модалки редактирования
-    const [stateTheme,setStateTheme] = useState(localStorage.getItem('theme'))
-    const [stateOpen,setStateOpen] = useState(false); // состояние модалки состояния
-    const [currentState,setCurrentState] = useState(null) // id текущего состояния
-    const [current,setCurrent] = useState(null); // id текущей записи
-    const [openAdd,setAddOpen] = useState(false); // состояние  добавления модалки
-    return (
-        <AppContext.Provider value={{stateTheme,confirmData,setConfirmData}}>
-            <div className={`App ${stateTheme === 'dark' ? theme.dark : theme.light}`}>
-                {!loading &&
-                <HeaderPage
-                    setTheme={setStateTheme}
-                    stateTheme={stateTheme}
-                />
-                }
-                {stateOpen &&
-                <StateModal
-                    stateOpen={stateOpen}
-                    setStateOpen={setStateOpen}
-                    currentState={currentState}
-                />
-                }
-                <EditModal
-                    open={open}
-                    setOpen={setOpen}
-                    current={current}
-                />
-                <AddModal
-                    openAdd={openAdd}
-                    setAddOpen={setAddOpen}
-                />
-                <ConfirmModal
-                    confirmModal={confirmModal}
-                    setConfirmModal={setConfirmModal}
-                />
-                {!loading && <h1>Журнал учета состояния пациентов</h1>}
-                <TableContent
-                    setOpen={setOpen}
-                    setAddOpen={setAddOpen}
-                    setCurrent={setCurrent}
-                    setStateModal={setStateOpen}
-                    setCurrentState={setCurrentState}
-                    setConfirmModal={setConfirmModal}
+    const {setOpen} = React.useContext(AppContext)
+    const dispatch = useDispatch()
+    const data = useSelector(state=>state.dashboard.data);
+    const [deleteId,setDeleteId] = React.useState(0)
+    const [commentId,setCommentId] = React.useState(0)
 
+    React.useEffect(()=>{
+        if(!data.length){
+            dispatch(getDashboard())
+            dispatch(getDepartment())
+        }
+    },[])
+
+    const onDeleteData=async()=>{
+         await dispatch(deleteDashboard(deleteId))
+         setOpen(false)
+    }
+
+    return (
+            <Container>
+                <CssBaseline/>
+                <CustomDialog>
+                    <div>
+                        Вы действительно хотите удалить?
+                        <Button color="primary" onClick={onDeleteData}>
+                            Удалить
+                        </Button>
+                        <Button color="error" onClick={()=>setOpen(false)}>
+                            Закрыть
+                        </Button>
+                    </div>
+                </CustomDialog>
+                <CommentsDialog
+                    commentId={commentId}
                 />
-            </div>
-        </AppContext.Provider>
+                    <TableContent
+                        setCommentId={setCommentId}
+                        setDeleteId={setDeleteId}
+                        data={data}
+                    />
+            </Container>
     );
 }
 

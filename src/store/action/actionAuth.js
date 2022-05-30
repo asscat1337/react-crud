@@ -1,26 +1,26 @@
-import {actionLoginUser,loadAuthUser,logoutUser} from "../reducer/authReducer";
-import axios from 'axios'
+import {createAsyncThunk} from '@reduxjs/toolkit'
+import $http from "../../http/$http";
 
 
 
-function LoginUser(user){
-    return dispatch=>{
-        dispatch(loadAuthUser())
-        axios.post('http://localhost:8080/auth/login',user)
-            .then(({data})=>{
-                dispatch(actionLoginUser(user))
-                sessionStorage.setItem('token',data.token)
-                sessionStorage.setItem('isAuth',data.success)
-                sessionStorage.setItem('fio',data.fio)
-            })
-            .catch(error=>console.log(error))
+
+const login = createAsyncThunk(
+    'auth/login',
+    async(user,thunkApi)=>{
+        try{
+            const {data} = await $http.post('/auth/login',user)
+            return data
+        }catch (e) {
+            thunkApi.rejectWithValue(e)
+        }
     }
+)
+// const logout = createAsyncThunk(
+//     'auth/logout',
+//     async (thunkAPI)=>{
+//
+//     }
+// )
+export {
+    login
 }
-function LogoutUser(){
-    return dispatch=>{
-        dispatch(logoutUser())
-    }
-}
-
-
-export {LoginUser,logoutUser}

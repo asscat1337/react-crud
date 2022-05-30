@@ -1,4 +1,6 @@
 import {LOAD_USER, LOGIN_USER,LOGOUT_USER} from "../types";
+import {createSlice} from "@reduxjs/toolkit";
+import {login} from "../action/actionAuth";
 
 const initialState = {
     user:[],
@@ -8,31 +10,21 @@ const initialState = {
 
 const isLogin = sessionStorage.getItem('isAuth');
 
-function authReducer(state=initialState,action){
-    switch (action.type) {
-        case LOAD_USER :
+const authReducer = createSlice({
+    name:'auth',
+    initialState:initialState,
+    reducers:{},
+    extraReducers:(reducer)=>{
+        reducer.addCase(login.fulfilled.type,(state,action)=>{
             return {
-                isAuth: false,
-                loading:true,
-                user:[]
-            };
-        case LOGIN_USER :
-            return {
-                isAuth: true,
-                user:[...state.user,{login:action.payload.login}],
-                loading: false
-            };
-        case LOGOUT_USER :{
-            return {
-                user:[],
-                isAuth: false,
-                loading: false
+                ...state,
+                isAuth:true,
+                loading: false,
+                user:action.payload
             }
-        }
-        default :
-            return state
+        })
     }
-}
+})
 export const actionLoginUser=payload=>({type:LOGIN_USER,payload});
 export const loadAuthUser=payload=>({type:LOAD_USER,payload});
 export const logoutUser=()=>({type:LOGOUT_USER});

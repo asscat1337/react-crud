@@ -1,14 +1,22 @@
+import React from 'react'
 import {useDispatch,useSelector} from 'react-redux'
 import {useForm,Controller} from 'react-hook-form'
-import {useEffect} from 'react'
-import {Form,Button,FloatingLabel} from "react-bootstrap";
+import {TextField,
+    Button,
+    Box,
+    Container,
+    Autocomplete
+} from "@mui/material";
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as yup from 'yup'
-import actionDepartment from '../../store/action/actionDepartment'
-import {addActionDashboard,updateDashboard} from "../../store/action/actionDashboard";
-import Select from "react-select";
+ // import actionDepartment from '../../store/action/actionDepartment'
+import {addDashboard, updateDashboard} from "../../store/action/actionDashboard";
+// import {addActionDashboard,updateDashboard} from "../../store/action/actionDashboard";
+import {AppContext} from "../../pages/Dashboard/Dashboard";
 
-function FormData({editable,current}){
+function FormData({editData = {},id}){
+
+    const {editable} = React.useContext(AppContext)
     const dispatch = useDispatch();
     const department = useSelector(state=>state.dashboard.department);
 
@@ -23,90 +31,91 @@ function FormData({editable,current}){
         resolver:yupResolver(schema)
     })
 
-    useEffect(()=>{
-        if(!department.length){
-            dispatch(actionDepartment())
+        React.useEffect(()=>{
+    //     if(!department.length){
+    //         dispatch(actionDepartment())
+    //     }
+        if(editData){
+            setValue("from",editData.from);
+            setValue("patient",editData.patient)
         }
-        if(current){
-            setValue("from",current.from);
-            setValue("patient",current.patient)
-        }
-    },[current,editable])
-    const onSubmit=(data)=>{
+     },[editData,editable])
+     const onSubmit=async(data)=>{
         if(editable){
-            dispatch(updateDashboard({
+           await dispatch(updateDashboard({
+                ...editData,
                 ...data,
-                dashboard_id:current.dashboard_id,
-                department:data.department === '' ? current.department : data.department,
-            }
-            ))
+                id
+            }))
         }
         else{
-            dispatch(addActionDashboard(data))
+            await dispatch(addDashboard(data))
         }
         reset({})
-    }
+     }
     return(
-        <Form onSubmit={handleSubmit(onSubmit)}>
-                <Form.Group>
-                    <Form.Label>От кого</Form.Label>
-                    <Form.Control
+        <Box>
+            <Container>
+                <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{
+                    marginTop:8,
+                    display:"flex",
+                    justifyContent:"center",
+                    flexDirection:'column',
+                    alignItems:'center'
+                }}>
+                    <label>От кого</label>
+                    <TextField
                         type="text"
+                        variant="standard"
                         placeholder="Введите..."
-                        className={`${errors.from?.message ? 'is-invalid' : ''}`}
+                        fullWidth
                         {...register('from')}
                     />
-                    {errors.from?.message ?
-                    <p className='text-danger'>{errors.from?.message}</p>
-                        :
-                        null
-                    }
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Пациент</Form.Label>
-                    <Form.Control
+                    <label>Пациент</label>
+                    <TextField
                         type="text"
+                        variant="standard"
                         placeholder="Введите..."
+                        fullWidth
                         {...register('patient')}
                     />
-                    {errors.patient?.message ?
-                        <p className='text-danger'>{errors.patient?.message}</p>
-                        :
-                        null
-                    }
-
-                </Form.Group>
-
-                <Form.Group>
-                    <Form.Label>Отделение</Form.Label>
+                    <label>Отделение</label>
                     <Controller
                         defaultValue="Введите"
-                        render={({field:{onChange,ref}})=>(
-                            <Select
-                                 placeholder="Введите..."
-                                isSearchable
-                                isClearable
-                                inputRef={ref}
+                        render={({field:{onChange,value}})=>(
+                            <Autocomplete
+                                placeholder="Введите..."
                                 options={department}
-                                onChange={val=>val !== null ? onChange(val.value) : false}
+                                fullWidth
+                                value={editData.department}
+                                //isOptionEqualToValue={(option,value)=>option.label === editData.department}
+                                onChange={(e,val)=>onChange(val.value)}
+                                renderInput={(params)=>(
+                                    <TextField {...params} label="Отделение"/>
+                                )}
                             />
                         )}
                         name="department"
                         control={control}
                     />
-                </Form.Group>
-            {!editable &&
-            <FloatingLabel controlId="floatingTextarea2" label="Состояние">
-                <Form.Control
-                    {...register('state')}
-                    as="textarea"
-                    placeholder="Введите состояние"
-                    style={{height:'100px'}}
-                />
-            </FloatingLabel>
-            }
-                <Button type="submit">{editable ?  'Редактировать' : 'Добавить' }</Button>
-            </Form>
+                    {!editable &&
+                    <>
+                        <TextField
+                            type="text"
+                            placeholder="Введите состояние"
+                            rows={5}
+                            multiline
+                            fullWidth
+                            {...register('state')}
+                        />
+                    </>
+                    }
+                    <Button type="submit">
+                        {editable ?  'Редактировать' : 'Добавить' }
+                    </Button>
+                </Box>
+            </Container>
+        </Box>
     )
 }
 

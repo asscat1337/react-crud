@@ -48,18 +48,34 @@ class dashboardController{
     }
     async addDashboard(req,res,next){
         try{
-            await Dashboard.create(req.body)
-                .then(res.send().status(200))
+            const data = (await Dashboard.create({
+                ...req.body,
+                last_state_update: dayjs().format('YYYY-MM-DD HH:mm:ss')
+            }, {
+            })).get({plain:true})
+
+            return res.status(200).json({...data,children:[]})
         }catch (e) {
+            console.log(e)
             console.log(e)
         }
     }
     async addState(req,res,next){
         try{
             const {patient_id,title} = req.body
-            await State.create({
-                title,patient_id,date:dayjs().format('YYYY-MM-DD HH:mm:ssZ[Z]')
-            }).then(data=>res.json(data))
+            const newComments = await State.create({
+                title,patient_id,date:dayjs().format('YYYY-MM-DD HH:mm:ss')
+            })
+
+            await Dashboard.update({
+                last_state_update:newComments.date
+            },{
+                where:{
+                    dashboard_id:patient_id
+                }
+            })
+
+            return res.status(200).json(newComments)
         }catch (e) {
             console.log(e)
         }
@@ -67,10 +83,18 @@ class dashboardController{
     async deleteData(req,res,next){
         try{
             const {id} = req.body
+            console.log(id)
             await Dashboard.destroy({where:{
                 dashboard_id:id
             }})
-            .then(()=>res.send().status(200))
+            .then(async ()=>{
+                await State.destroy({
+                    where:{
+                        patient_id:id
+                    }
+                })
+            })
+                .then(res.status(200).send())
         }catch(e){
             console.log(e)
         }

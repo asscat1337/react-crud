@@ -1,17 +1,47 @@
-import {createStore,applyMiddleware,combineReducers} from 'redux'
-import {composeWithDevTools} from "redux-devtools-extension";
-import thunk from 'redux-thunk';
-import reducer from "./reducer/reducer";
+import {configureStore,combineReducers} from "@reduxjs/toolkit";
+import autoMergeLevel1 from "reduxjs-toolkit-persist/lib/stateReconciler/autoMergeLevel1";
+import {persistStore,FLUSH, PAUSE, PERSIST, persistReducer, PURGE, REGISTER, REHYDRATE} from "reduxjs-toolkit-persist";
+import storage from 'reduxjs-toolkit-persist/lib/storage'
 import authReducer from "./reducer/authReducer";
-import adminReducer from "./reducer/adminReducer";
+import reducer from "./reducer/reducer";
 
-const rootReducer = combineReducers({
-    dashboard:reducer,
-    auth:authReducer,
-    admin:adminReducer
+
+const persistConfig = {
+    key:'root',
+    storage,
+    stateReconciler:autoMergeLevel1
+}
+
+const reducers = combineReducers({
+        auth:authReducer.reducer,
+        dashboard:reducer.reducer
 })
 
-const store = createStore(rootReducer,composeWithDevTools(applyMiddleware(thunk)));
+const persistedReducer = persistReducer(persistConfig,reducers)
 
-export default store
 
+const store = configureStore({
+    reducer:persistedReducer,
+    middleware:(getDefaultMiddleware)=>{
+       return getDefaultMiddleware({
+                serializableCheck:{
+                    ignoreActions:[
+                        FLUSH,
+                        REHYDRATE,
+                        PAUSE,
+                        PERSIST,
+                        PURGE,
+                        REGISTER
+                    ]
+                }
+        })
+    }
+
+})
+
+const persisted = persistStore(store)
+
+export  {
+    store,
+    persisted
+}

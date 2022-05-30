@@ -1,5 +1,6 @@
 const {DataTypes} = require('sequelize');
 const connection = require('./config');
+const Dashboard = require("./Dasboard");
 
 
 const Department = connection.define('department',{
@@ -17,5 +18,8 @@ const Department = connection.define('department',{
     freezeTableName:true,
     timestamps:false
 })
+Department.associate=(model)=>{
+    model.department.belongsTo(model.dashboard)
+}
 
 module.exports = Department

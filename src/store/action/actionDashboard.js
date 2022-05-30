@@ -1,54 +1,62 @@
-import {
-    showData,
-    addDashboard,
-    deleteDashboard,
-    updateActionDashboard,
-    updatePatientState,
-    loadDashboard
-} from "../reducer/reducer";
-import axios from "axios";
-import dayjs from "dayjs";
+import {createAsyncThunk} from "@reduxjs/toolkit";
+import $http from "../../http/$http";
+import data from "bootstrap/js/src/dom/data";
+import thunk from "redux-thunk";
 
-function actionDashboard(){
-    return dispatch=>{
-        dispatch(loadDashboard())
-        axios.get('http://localhost:8080/get-dashboard',
-            {headers:{
-                "Authorization":`Bearer ${sessionStorage.getItem('token')}`
-                }
-            })
-            .then(({data})=>dispatch(showData(data)))
-            .catch(error=>console.log(error))
+const getDashboard = createAsyncThunk(
+    'dashboard/get-data',
+    async (thunkApi)=>{
+        const {data} = await $http.get('/get-dashboard')
+        return data
     }
-}
-function addActionDashboard(data){
-  return dispatch=>{
-      axios.post('http://localhost:8080/add-dashboard',data)
-          .then(()=>dispatch(addDashboard(data)))
-          .catch(error=>console.log(error))
-  }
-}
-function deleteData(data){
-    return dispatch=>{
-        dispatch(loadDashboard())
-        axios.delete('http://localhost:8080/delete-dashboard',{data:{id:data}})
-        .then(()=>dispatch(deleteDashboard(data)))
-        .catch(error=>console.log(error))
+)
+const addDashboard = createAsyncThunk(
+    'dashboard/add-dashboard',
+    async(payload,thunkAPI)=>{
+        try{
+            const {data} = await $http.post('/add-dashboard',payload)
+            return data
+        }catch (e) {
+            return thunkAPI.rejectWithValue(e)
+        }
     }
-}
-function updateDashboard(data){
-    return dispatch=>{
-        axios.post('http://localhost:8080/update-dashboard',data)
-        .then(()=>dispatch(updateActionDashboard(data)))
-        .catch(error=>console.log(error))
+)
+const updateDashboard = createAsyncThunk(
+    'dashboard/update-dashboard',
+    async(data,thunkAPI)=>{
+        await $http.post('/update-dashboard',data)
+        return data
     }
-}
-function actionUpdateStateDashboard(data){
-    return dispatch=>{
-        axios.post('http://localhost:8080/update-state-dashboard',
-            {...data,last_state_update:dayjs().format('YYYY-MM-DD')})
-            .then(()=>dispatch(updatePatientState({...data,last_state_update:dayjs().format('YYYY-MM-DD')})))
-            .catch(error=>console.log(error))
+)
+
+const deleteDashboard = createAsyncThunk(
+    'dashboard/delete-dashboard',
+    async(data,thunkAPI)=>{
+        await $http.delete('/delete-dashboard',{
+            data:{
+                id:data
+            }
+        })
+        return data
     }
+)
+
+const getComments = createAsyncThunk(
+    'dashboard/get-comments',
+    async(id,thunkAPI)=>{
+        const {data} = await $http.get(`/get-state/${id}`)
+
+        return {
+            data,
+            id
+        }
+    }
+)
+
+export {
+    getDashboard,
+    addDashboard,
+    updateDashboard,
+    deleteDashboard,
+    getComments
 }
-export {addActionDashboard,actionDashboard,deleteData,updateDashboard,actionUpdateStateDashboard}

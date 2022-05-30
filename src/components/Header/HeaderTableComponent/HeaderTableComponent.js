@@ -1,22 +1,24 @@
-import {Button, FormControl, InputGroup} from "react-bootstrap";
+import React from 'react'
+import {TextField,Button,Box} from "@mui/material";
 import {Link} from "react-router-dom";
 
-
-function HeaderTableComponent({filter,setFilter,setAddOpen}){
-    const onClickButton =()=>{
-        setAddOpen(true)
-    }
+function HeaderTableComponent({globalFilter,setGlobalFilter}){
     return(
-        <InputGroup className="mb-3">
-            <FormControl
-                value={filter || ''}
-                onChange={(e)=>setFilter(e.target.value)}
+        <Box sx={{margin:'10px auto',display:'flex',alignItems:'center'}}>
+            <TextField
+                variant="standard"
+                sx={{mb:2,mt:3}}
+                value={globalFilter || ''}
+                onChange={(e)=>setGlobalFilter(e.target.value)}
                 placeholder="Введите запрос..."
+                sx={{width:'85%'}}
             />
-            <Button variant="outline-primary" onClick={onClickButton}>
-                Добавить
-            </Button>
-        </InputGroup>
+            <Link to="/add">
+                <Button variant="contained">
+                        Добавить
+                </Button>
+            </Link>
+        </Box>
     )
 }
 

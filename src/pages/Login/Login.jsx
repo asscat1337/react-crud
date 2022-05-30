@@ -1,69 +1,123 @@
-import {useState,useEffect} from 'react'
+import React from 'react'
 import {useDispatch,useSelector}  from "react-redux";
-import {useForm} from "react-hook-form";
+import {useForm,Controller} from "react-hook-form";
 import {useNavigate,useLocation} from 'react-router-dom'
 import * as yup from 'yup';
 import {yupResolver} from "@hookform/resolvers/yup";
-import styles from './Login.module.scss'
-import {Form,Button} from 'react-bootstrap';
+import {
+    Button,
+    TextField,
+    Box,
+    Typography,
+    Container, Avatar
+} from "@mui/material";
+import InputPassword from "../../components/Inputs/InputPassword/InputPassword";
+import {LockOutlined} from "@mui/icons-material";
 
-import {LoginUser} from "../../store/action/actionAuth";
+import {login} from "../../store/action/actionAuth";
 
 function Login(){
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const auth = useSelector(state=>state.auth.isAuth)
+    const [showPassword,setShowPassword] = React.useState(false)
     const schema = yup.object().shape({
         login:yup.string().required('Поле должно быть заполнено'),
         password:yup.string().required('Поле должно быть заполнено')
     })
 
-    useEffect(()=>{
-        if(auth){
-            navigate('/dashboard')
-        }
-    },[auth])
-
-    const {handleSubmit,register,formState:{errors}} = useForm({
+    const {handleSubmit,register,control,formState:{errors}} = useForm({
         resolver:yupResolver(schema)
     })
-    const [checkPassword,setCheckPassword] = useState(false)
-    const onCheckPassword=()=>{
-        setCheckPassword(!checkPassword)
-    }
-    const submitForm=(data)=>{
-        dispatch(LoginUser(data))
+    const submitForm = async (data)=>{
+      try{
+          const {payload} = await dispatch(login(data))
+          localStorage.setItem('token',payload.token)
+      }catch (e) {
+          console.log(e)
+      }
+      finally {
+          navigate('/dashboard')
+      }
     }
     return (
-        <div className={styles.login}>
-            <div className={styles.formWrapper}>
-                <Form onSubmit={handleSubmit(submitForm)}>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Логин</Form.Label>
-                        <Form.Control
-                            {...register('login')}
-                            type="text"
-                            placeholder="Введите логин"
-                        />
-                        <p>{errors.login?.message}</p>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Пароль</Form.Label>
-                        <Form.Control
-                            {...register('password')}
-                            type={checkPassword ? "text" :"password"}
-                            placeholder="Введите пароль"/>
-                            <p>{errors.password?.message}</p>
-                        <Form.Check type="checkbox" label="Показать пароль" onClick={onCheckPassword}/>
-                    </Form.Group>
+        <Container>
+            <Box sx={{
+                marginTop:8,display:"flex",
+                justifyContent:"center",
+                flexDirection:'column',
+                alignItems:'center'
+            }}>
+                <Avatar>
+                    <LockOutlined/>
+                </Avatar>
+                <Typography component="h5">
+                    Авторизация
+                </Typography>
+                <Box component="form" noValidate sx={{mt:1}} onSubmit={handleSubmit(submitForm)}>
+                    <TextField
+                        variant="standard"
+                        label="Логин"
+                        margin="normal"
+                        fullWidth
+                        required
+                        {...register('login')}
+                    />
+                    <Controller
+                        name="password"
+                        control={control}
+                        render={({field:{value,onChange}})=>(
+                            <InputPassword
+                                showPassword={showPassword}
+                                setShowPassword={setShowPassword}
+                                value={value}
+                                onChange={onChange}
+                            />
+                        )}
+                    />
                     <Button
-                        variant="primary"
-                        type="submit">
+                        sx={{
+                            mt:2,
+                            mb:2
+                        }}
+                        variant="contained"
+                        type="submit"
+                        fullWidth
+                    >
                         Авторизация
                     </Button>
-                </Form>
-            </div>
-        </div>
+                </Box>
+            </Box>
+        </Container>
+        // <div className={styles.login}>
+        //     <div className={styles.formWrapper}>
+        //         <Form onSubmit={handleSubmit(submitForm)}>
+        //             <Form.Group className="mb-3">
+        //                 <Form.Label>Логин</Form.Label>
+        //                 <Form.Control
+        //                     {...register('login')}
+        //                     type="text"
+        //                     placeholder="Введите логин"
+        //                 />
+        //                 <p>{errors.login?.message}</p>
+        //             </Form.Group>
+        //             <Form.Group className="mb-3">
+        //                 <Form.Label>Пароль</Form.Label>
+        //                 <Form.Control
+        //                     {...register('password')}
+        //                     type={checkPassword ? "text" :"password"}
+        //                     placeholder="Введите пароль"/>
+        //                     <p>{errors.password?.message}</p>
+        //                 <Form.Check type="checkbox" label="Показать пароль" onClick={onCheckPassword}/>
+        //             </Form.Group>
+        //             <Button
+        //                 variant="primary"
+        //                 type="submit">
+        //                 Авторизация
+        //             </Button>
+        //         </Form>
+        //     </div>
+        // </div>
 
     )
 }
